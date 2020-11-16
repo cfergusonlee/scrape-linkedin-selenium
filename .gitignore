@@ -1,3 +1,8 @@
+# Package artifacts
+build/**
+dist/**
+linkedin_env/**
+
 *.pyc
 .vscode
 **/*.egg-info/**
