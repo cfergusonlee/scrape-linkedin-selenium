@@ -28,18 +28,14 @@ def test_profile_scraper():
         "school",
         "summary",
         "location",
-        "followers",
-        "email",
         "image",
     ]
     for a in non_nulls:
-        if not personal_info[a]:
-            print(f"Missing {a}")
         assert personal_info[a]
 
     # Accomplishments
     accomplishments = profile_info["accomplishments"]
-    non_nulls = ["certifications", "courses", "honors", "projects", "languages"]
+    non_nulls = ["courses", "honors", "projects", "languages"]
     for a in non_nulls:
         assert accomplishments[a]
 

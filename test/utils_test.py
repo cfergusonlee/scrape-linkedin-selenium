@@ -1,7 +1,9 @@
-from scrape_linkedin import utils as u
+from os import path
+
 import bs4
 from bs4 import BeautifulSoup as BS
-from os import path
+
+from scrape_linkedin import utils as u
 
 file_path = path.abspath(__file__)
 DIR = path.dirname(file_path)

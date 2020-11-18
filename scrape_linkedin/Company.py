@@ -5,7 +5,7 @@ import re
 
 
 class Company(ResultsObject):
-    """Linkedin User Profile Object"""
+    """Linkedin Company Page Object"""
 
     attributes = [
         "overview",

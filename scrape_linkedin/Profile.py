@@ -29,8 +29,8 @@ class Profile(ResultsObject):
             {
                 "name": ".pv-top-card--list > li",
                 "headline": ".flex-1.mr5 h2",
-                "company": 'li[data-control-name="position_see_more"]',
-                "school": 'li[data-control-name="education_see_more"]',
+                "company": 'a[data-control-name="position_see_more"]',
+                "school": 'a[data-control-name="education_see_more"]',
                 "location": ".pv-top-card--list-bullet > li",
             },
         )
@@ -46,7 +46,7 @@ class Profile(ResultsObject):
         image_element = one_or_default(top_card, "img.profile-photo-edit__preview")
 
         if not image_element:
-            image_element = one_or_default(top_card, "img.pv-top-card-section__photo")
+            image_element = one_or_default(top_card, "img.pv-top-card__photo")
 
         # Set image url to the src of the image html tag, if it exists
         try:
@@ -55,23 +55,6 @@ class Profile(ResultsObject):
             pass
 
         personal_info["image"] = image_url
-
-        followers_text = text_or_default(
-            self.soup, ".pv-recent-activity-section__follower-count", ""
-        )
-        personal_info["followers"] = followers_text.replace("followers", "").strip()
-
-        # print(contact_info)
-        personal_info.update(
-            get_info(
-                contact_info,
-                {
-                    "email": ".ci-email .pv-contact-info__ci-container",
-                    "phone": ".ci-phone .pv-contact-info__ci-container",
-                    "connected": ".ci-connected .pv-contact-info__ci-container",
-                },
-            )
-        )
 
         personal_info["websites"] = []
         if contact_info:
@@ -183,7 +166,9 @@ class Profile(ResultsObject):
             "given": [],
         }
         rec_block = one_or_default(self.soup, "section.pv-recommendations-section")
-        received, given = all_or_default(rec_block, "div.artdeco-tabpanel")
+        received, given = all_or_default(
+            rec_block, "div.artdeco-tabpanel", default=([], [])
+        )
         for rec_received in all_or_default(received, "li.pv-recommendation-entity"):
             recs["received"].append(get_recommendation_details(rec_received))
 
