@@ -25,6 +25,7 @@ def test_all_or_default():
     assert u.all_or_default(profile_soup, ".asjdksjaldjsklajdksaldas") == []
     assert u.all_or_default(profile_soup, ".fjdskalfjdsalfs", default=None) == None
     assert len(u.all_or_default(basic_soup, ".test1")) == 2
+    assert len(u.all_or_default(basic_soup, ".a2")) == 1
     assert u.all_or_default(None, ".test1") == []
 
 
