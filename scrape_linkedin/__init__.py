@@ -2,6 +2,8 @@ from .utils import *
 from .Profile import Profile
 from .ProfileScraper import ProfileScraper
 from .ParallelScraper import scrape_in_parallel
+from .Job import Job
+from .JobScraper import JobScraper
 from .Company import Company
 from .CompanyScraper import CompanyScraper
 from .ConnectionScraper import ConnectionScraper

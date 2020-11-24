@@ -66,7 +66,7 @@ def text_or_default(element, selector, default=None):
     """Same as one_or_default, except it returns stripped text contents of the found element
     """
     try:
-        return element.select_one(selector).get_text().strip()
+        return element.select_one(selector).get_text(separator=" ", strip=True)
     except Exception as e:
         return default
 
@@ -244,7 +244,7 @@ def get_skill_info(skill):
             "name": ".pv-skill-category-entity__name",
             "endorsements": ".pv-skill-category-entity__endorsement-count",
         },
-        default=0,
+        default="0",
     )
 
 

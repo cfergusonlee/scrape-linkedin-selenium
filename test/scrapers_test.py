@@ -1,4 +1,4 @@
-from scrape_linkedin import CompanyScraper, ProfileScraper, HEADLESS_OPTIONS
+from scrape_linkedin import CompanyScraper, ProfileScraper, JobScraper, HEADLESS_OPTIONS
 from selenium.webdriver import Chrome
 import os
 
@@ -87,3 +87,27 @@ def test_company_scraper():
     ]
     for a in overview_fields:
         assert overview[a]
+
+
+def test_job_scraper():
+    """
+    Verifies that all job posting fields have been found.
+    Returns:
+
+    """
+
+    with JobScraper(driver_options=HEADLESS_OPTIONS) as js:
+        job = js.scrape(job_id="1860845026").to_dict()
+
+    details_fields = [
+        "job_title",
+        "location",
+        "organization",
+        "seniority_level",
+        "industries",
+        "employment_type",
+        "job_functions",
+        "job_description",
+    ]
+    for field in details_fields:
+        assert job["details"][field]

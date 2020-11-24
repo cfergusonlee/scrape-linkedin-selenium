@@ -56,6 +56,17 @@ class Profile(ResultsObject):
 
         personal_info["image"] = image_url
 
+        personal_info.update(
+            get_info(
+                contact_info,
+                {
+                    "email": ".ci-email .pv-contact-info__ci-container",
+                    "phone": ".ci-phone .pv-contact-info__ci-container",
+                    "connected": ".ci-connected .pv-contact-info__ci-container",
+                },
+            )
+        )
+
         personal_info["websites"] = []
         if contact_info:
             websites = contact_info.select(".ci-websites li a")
@@ -107,7 +118,7 @@ class Profile(ResultsObject):
 
         # Sort skills based on endorsements.  If the person has no endorsements
         def sort_skills(x):
-            return int(x["endorsements"].replace("+", "")) if x["endorsements"] else 0
+            return int(x["endorsements"].replace("+", ""))
 
         return sorted(skills, key=sort_skills, reverse=True)
 
