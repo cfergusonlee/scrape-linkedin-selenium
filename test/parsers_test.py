@@ -28,7 +28,7 @@ def test_company_overview():
 def test_job_details():
     expected_details = {
         "job_title": "Data Analyst",
-        "location": "Weatogue, Connecticut, United States",
+        "location": "Weatogue, CT",
         "organization": "US Tech Solutions",
         "seniority_level": "Mid-Senior level",
         "industries": "Information Technology & Services",

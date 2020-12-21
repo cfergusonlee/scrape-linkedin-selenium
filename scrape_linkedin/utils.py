@@ -6,7 +6,7 @@ from selenium.webdriver.support.expected_conditions import _find_element
 
 options = Options()
 options.add_argument("--headless")
-HEADLESS_OPTIONS = {"chrome_options": options}
+HEADLESS_OPTIONS = {"options": options}
 
 
 def flatten_list(l):

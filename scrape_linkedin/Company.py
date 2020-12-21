@@ -37,9 +37,7 @@ class Company(ResultsObject):
         overview["description"] = container.select_one("section > p").get_text().strip()
 
         metadata_keys = container.select(".org-page-details__definition-term")
-        print(metadata_keys)
         metadata_keys = [x for x in metadata_keys if "Company size" not in x.get_text()]
-        print(metadata_keys)
         metadata_values = container.select(".org-page-details__definition-text")
         overview.update(
             get_info(banner, {"name": ".org-top-card-summary__title"})
@@ -58,7 +56,6 @@ class Company(ResultsObject):
             dict_val = val.get_text().strip()
             if "company_size" not in dict_key:
                 overview[dict_key] = dict_val
-        print(overview)
 
         all_employees_links = all_or_default(
             banner, ".mt2 > a > span"

@@ -19,7 +19,7 @@ class Job(ResultsObject):
         """Return dict of the details section of the Linkedin Page"""
 
         # Banner containing job name + location
-        headline_selector = ".justify-space-between.align-items-stretch"
+        headline_selector = ".p5"
         headline_container = one_or_default(self.details_soup, headline_selector)
         headline_details = self.get_headline_details(headline_container)
 
@@ -41,9 +41,9 @@ class Job(ResultsObject):
                 - location
                 - organization
         """
-        job_title_selector = ".jobs-top-card__job-title"
-        location_selector = ".jobs-top-card__bullet"
-        organization_selector = ".jobs-top-card__company-url"
+        job_title_selector = "h1.t-24"
+        location_selector = ".jobs-unified-top-card__bullet"
+        organization_selector = ".jobs-unified-top-card__subtitle-primary-grouping .ember-view"
         headline_details = get_info(
             headline_container,
             {
@@ -69,7 +69,7 @@ class Job(ResultsObject):
         """
 
         # Parse job description
-        job_description_selector = ".jobs-box__html-content"
+        job_description_selector = ".jobs-box__html-content span"
         job_description = text_or_default(
             description_container, job_description_selector
         )
