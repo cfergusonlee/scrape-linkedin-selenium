@@ -102,7 +102,7 @@ def test_job_scraper():
     details_fields = [
         "job_title",
         "location",
-        "organization",
+        "company_name",
         "seniority_level",
         "industries",
         "employment_type",

@@ -39,19 +39,17 @@ class Job(ResultsObject):
             Dict of job headline details. These include:
                 - job_title
                 - location
-                - organization
+                - Company name
         """
         job_title_selector = "h1.t-24"
         location_selector = ".jobs-unified-top-card__bullet"
-        organization_selector = ".jobs-unified-top-card__subtitle-primary-grouping .ember-view"
         headline_details = get_info(
             headline_container,
-            {
-                "job_title": job_title_selector,
-                "location": location_selector,
-                "organization": organization_selector,
-            },
+            {"job_title": job_title_selector, "location": location_selector,},
         )
+        company_url = headline_container.find("a", href=True)["href"]
+        company = re.findall(r"/company/(.*)/life", company_url)[0]
+        headline_details["company_name"] = company
         return headline_details
 
     def get_description_details(self, description_container):
@@ -81,24 +79,24 @@ class Job(ResultsObject):
             description_container, description_boxes_selector
         )
         for description_box in description_boxes:
-            description_title_selector = "h3"
-            description_title = text_or_default(
-                description_box, description_title_selector
-            ).replace("Industry", "Industries")
+            description_title = text_or_default(description_box, "h3").replace(
+                "Industry", "Industries"
+            )
             description_key = "_".join(description_title.lower().split())
             if description_key in ("seniority_level", "employment_type"):
-                description_value_selector = "p"
+                description_value = text_or_default(description_box, "p")
             else:
                 description_value_selector = ".jobs-description-details__list-item"
+                description_value_elements = all_or_default(
+                    description_box, description_value_selector
+                )
+                description_value = tuple(
+                    [
+                        element.get_text(strip=True)
+                        for element in description_value_elements
+                    ]
+                )
 
-            description_value_elements = all_or_default(
-                description_box, description_value_selector
-            )
-            description_value = [
-                element.get_text(strip=True) for element in description_value_elements
-            ]
-            if len(description_value) == 1:
-                description_value = description_value[0]
             description_details[description_key] = description_value
 
         return description_details

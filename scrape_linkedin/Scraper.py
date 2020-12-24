@@ -7,6 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+from .utils import HEADLESS_OPTIONS
+
 
 class Scraper(object):
     """
@@ -22,10 +24,20 @@ class Scraper(object):
         - timeout {float}: time to wait for page to load first batch of async content
     """
 
-    def __init__(self, cookie=None, scraperInstance=None, driver=selenium.webdriver.Chrome, driver_options={}, scroll_pause=0.1, scroll_increment=300, timeout=10):
+    def __init__(
+        self,
+        cookie=None,
+        scraperInstance=None,
+        driver=selenium.webdriver.Chrome,
+        driver_options=HEADLESS_OPTIONS,
+        scroll_pause=0.1,
+        scroll_increment=300,
+        timeout=10,
+    ):
         if type(self) is Scraper:
             raise Exception(
-                'Scraper is an abstract class and cannot be instantiated directly')
+                "Scraper is an abstract class and cannot be instantiated directly"
+            )
 
         if scraperInstance:
             self.was_passed_instance = True
@@ -40,32 +52,31 @@ class Scraper(object):
         self.scroll_pause = scroll_pause
         self.scroll_increment = scroll_increment
         self.timeout = timeout
-        self.driver.get('http://www.linkedin.com')
+        self.driver.get("http://www.linkedin.com")
         self.driver.set_window_size(1920, 1080)
 
-        if 'LI_EMAIL' in environ and 'LI_PASS' in environ:
-            self.login(environ['LI_EMAIL'], environ['LI_PASS'])
+        if "LI_EMAIL" in environ and "LI_PASS" in environ:
+            self.login(environ["LI_EMAIL"], environ["LI_PASS"])
         else:
-            if not cookie and 'LI_AT' not in environ:
+            if not cookie and "LI_AT" not in environ:
                 raise ValueError(
-                    'Must either define LI_AT environment variable, or pass a cookie string to the Scraper')
+                    "Must either define LI_AT environment variable, or pass a cookie string to the Scraper"
+                )
             elif not cookie:
-                cookie = environ['LI_AT']
-            self.driver.add_cookie({
-                'name': 'li_at',
-                'value': cookie,
-                'domain': '.linkedin.com'
-            })
+                cookie = environ["LI_AT"]
+            self.driver.add_cookie(
+                {"name": "li_at", "value": cookie, "domain": ".linkedin.com"}
+            )
 
     @abstractmethod
     def scrape(self):
-        raise Exception('Must override abstract method scrape')
+        raise Exception("Must override abstract method scrape")
 
     def login(self, email, password):
-        email_input = self.driver.find_element_by_css_selector(
-            'input.login-email')
+        email_input = self.driver.find_element_by_css_selector("input.login-email")
         password_input = self.driver.find_element_by_css_selector(
-            'input.login-password')
+            "input.login-password"
+        )
         email_input.send_keys(email)
         password_input.send_keys(password)
         password_input.send_keys(Keys.ENTER)
@@ -83,16 +94,19 @@ class Scraper(object):
         """
         # NOTE: this starts scrolling from the current scroll position, not the top of the page.
         current_height = self.driver.execute_script(
-            "return document.documentElement.scrollTop")
+            "return document.documentElement.scrollTop"
+        )
         while True:
             self.click_expandable_buttons()
             # Scroll down to bottom in increments of self.scroll_increment
             new_height = self.driver.execute_script(
-                "return Math.min({}, document.body.scrollHeight)".format(current_height + self.scroll_increment))
-            if (new_height == current_height):
+                "return Math.min({}, document.body.scrollHeight)".format(
+                    current_height + self.scroll_increment
+                )
+            )
+            if new_height == current_height:
                 break
-            self.driver.execute_script(
-                "window.scrollTo(0, {});".format(new_height))
+            self.driver.execute_script("window.scrollTo(0, {});".format(new_height))
             current_height = new_height
             # Wait to load page
             time.sleep(self.scroll_pause)
@@ -103,24 +117,23 @@ class Scraper(object):
             'button[aria-expanded="false"].pv-profile-section__see-more-inline',
             'button[aria-expanded="false"].pv-top-card-section__summary-toggle-button',
             'button[aria-expanded="false"].inline-show-more-text__button',
-            'button[data-control-name="contact_see_more"]'
+            'button[data-control-name="contact_see_more"]',
         ]
         for name in expandable_button_selectors:
             try:
                 self.driver.find_element_by_css_selector(name).click()
             except:
                 pass
-         # Use JQuery to click on invisible expandable 'see more...' elements
+        # Use JQuery to click on invisible expandable 'see more...' elements
         self.driver.execute_script(
-            'document.querySelectorAll(".lt-line-clamp__ellipsis:not(.lt-line-clamp__ellipsis--dummy) .lt-line-clamp__more").forEach(el => el.click())')
+            'document.querySelectorAll(".lt-line-clamp__ellipsis:not(.lt-line-clamp__ellipsis--dummy) .lt-line-clamp__more").forEach(el => el.click())'
+        )
 
     def wait(self, condition):
         return WebDriverWait(self.driver, self.timeout).until(condition)
 
     def wait_for_el(self, selector):
-        return self.wait(EC.presence_of_element_located((
-            By.CSS_SELECTOR, selector
-        )))
+        return self.wait(EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
 
     def __enter__(self):
         return self
